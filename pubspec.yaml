@@ -19,6 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  gesture_x_detector: ^1.1.1
 
 dev_dependencies:
   flutter_test:

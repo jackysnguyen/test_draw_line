@@ -1,99 +1,237 @@
 import 'package:flutter/material.dart';
+import 'package:gesture_x_detector/gesture_x_detector.dart';
+import 'package:test2/MyLine.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    MaterialApp(
+      home: XGestureExample(),
+    ),
+  );
+}
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class XGestureExample extends StatefulWidget {
+  @override
+  _XGestureExampleState createState() => _XGestureExampleState();
+}
+
+class _XGestureExampleState extends State<XGestureExample> {
+  String lastEventName = 'Tap on screen';
+  Offset xPos = Offset(150, 250);
+  Offset yPos = Offset(150, 350);
+  Offset zPos = Offset(50, 400);
+  var listLine = [];
+  // Widget drawLine = Draw_Line(Offset(0, 0), Offset(0, 100));
+  // List<Widget> listings = [];
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // Application name
-      title: 'Flutter Stateful Clicker Counter',
-      theme: ThemeData(
-        // Application theme data, you can set the colors for the application as
-        // you want
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Clicker Counter Home Page'),
+    return Material(
+      child: DrawLine(a: xPos, b: yPos, c: zPos),
+      // child: Stack(
+      //   children: [
+      //     DrawLine(a: xPos, b: yPos),
+      //     // CustomPaint(
+      //     //     painter: MyLine(
+      //     //         a: xPos,
+      //     //         b: yPos,
+      //     //         sideColor: Color(0xfff60404),
+      //     //         sideWidth: 5)),
+      //     // ...listLine,
+      //   ],
+      // ),
     );
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  final String title;
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  void onScrollEvent(ScrollEvent event) {
+    setLastEventName('onLongPressMove');
+    print('scrolling - pos: ${event.localPos} delta: ${event.scrollDelta}');
+  }
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  void onLongPressMove(MoveEvent event) {
+    setLastEventName('onLongPressMove');
+    print('onMoveUpdate - pos: ${event.localPos} delta: ${event.delta}');
+  }
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  void onLongPressEnd() {
+    setLastEventName('onLongPressEnd');
+    print('onLongPressEnd');
+  }
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
+  void onScaleEnd() {
+    setLastEventName('onScaleEnd');
+    print('onScaleEnd');
+  }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  void onScaleUpdate(ScaleEvent event) {
+    setLastEventName('onScaleUpdate');
+    print(
+        'onScaleUpdate - changedFocusPoint:  ${event.focalPoint} ; scale: ${event.scale} ;Rotation: ${event.rotationAngle}');
+  }
 
-  void _incrementCounter() {
+  void onScaleStart(initialFocusPoint) {
+    setLastEventName('onScaleStart');
+    print('onScaleStart - initialFocusPoint: $initialFocusPoint');
+  }
+
+  void onMoveUpdate(MoveEvent event) {
+    setLastEventName('onMoveUpdate');
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      yPos = event.localPos;
+      //listLine.isNotEmpty(index, element)
+    });
+    print('onMoveUpdate - pos: ${event.localPos} delta: ${event.delta}');
+  }
+
+  void onMoveEnd(MoveEvent event) {
+    setLastEventName('onMoveEnd');
+
+    listLine.add(DrawLine(a: xPos, b: yPos));
+    print('onMoveEnd - pos: $yPos');
+  }
+
+  void onMoveStart(MoveEvent event) {
+    setLastEventName('onMoveStart');
+    xPos = event.localPos;
+
+    // Draw_Line(Offset(0, 0), Offset(0, 100)).test();
+    print('onMoveStart - pos: $xPos');
+  }
+
+  void onLongPress(TapEvent event) {
+    setLastEventName('onLongPress');
+
+    // listings.add(drawLine);
+
+    print('onLongPress - pos: ${event.localPos}');
+  }
+
+  void onDoubleTap(event) {
+    setLastEventName('onDoubleTap');
+    print('onDoubleTap - pos: ' + event.localPos.toString());
+  }
+
+  void onTap(event) {
+    setLastEventName('onTap');
+    print('onTap - pos: ' + event.localPos.toString());
+  }
+
+  void setLastEventName(String eventName) {
+    setState(() {
+      lastEventName = eventName;
     });
   }
+}
+
+class DrawLine extends StatefulWidget {
+  Offset a = Offset(0, 0);
+  Offset b = Offset(0, 0);
+  Offset c = Offset(0, 0);
+
+  DrawLine(
+      {this.a = const Offset(0, 0),
+      this.b = const Offset(0, 0),
+      this.c = const Offset(0, 0)});
 
   @override
+  _DrawLineState createState() => _DrawLineState();
+}
+
+class _DrawLineState extends State<DrawLine> {
+  Offset b = Offset(0, 0);
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: TextStyle(fontSize: 25),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    return XGestureDetector(
+      child: Material(
+          child: Stack(
+              //Rotate triangle
+              children: [
+            CustomPaint(
+                // painter: MyLine(
+                //     a: widget.a,
+                //     b: widget.b,
+                //     sideColor: Color(0xfff60404),
+                //     sideWidth: 5)),
+                painter: MyAngle(a: widget.a, b: widget.b, c: widget.c)),
+            // CustomPaint(
+            //     painter: MyCircle(
+            //   center: widget.a,
+            // )),
+            // CustomPaint(
+            //     painter: MyCircle(
+            //   center: widget.b,
+            // )),
+            // CustomPaint(
+            //     painter: MyCircle(
+            //   center: widget.c,
+            // ))
+          ])),
+      doubleTapTimeConsider: 300,
+      longPressTimeConsider: 350,
+      onTap: onTap,
+      onDoubleTap: onDoubleTap,
+      onLongPress: onLongPress,
+      onLongPressEnd: onLongPressEnd,
+      onMoveStart: onMoveStart,
+      onMoveEnd: onMoveEnd,
+      onMoveUpdate: onMoveUpdate,
+      onScaleStart: onScaleStart,
+      onScaleUpdate: onScaleUpdate,
+      onScaleEnd: onScaleEnd,
+      bypassTapEventOnDoubleTap: false,
+      onLongPressMove: onLongPressMove,
+      onScrollEvent: onScrollEvent,
+      longPressMaximumRangeAllowed: 25,
     );
+  }
+
+  void onScrollEvent(ScrollEvent event) {
+    print('scrolling - pos: ${event.localPos} delta: ${event.scrollDelta}');
+  }
+
+  void onLongPressMove(MoveEvent event) {
+    print('onMoveUpdate - pos: ${event.localPos} delta: ${event.delta}');
+  }
+
+  void onLongPressEnd() {
+    print('onLongPressEnd');
+  }
+
+  void onScaleEnd() {
+    print('onScaleEnd');
+  }
+
+  void onScaleUpdate(ScaleEvent event) {
+    print(
+        'onScaleUpdate - changedFocusPoint:  ${event.focalPoint} ; scale: ${event.scale} ;Rotation: ${event.rotationAngle}');
+  }
+
+  void onScaleStart(initialFocusPoint) {
+    print('onScaleStart - initialFocusPoint: $initialFocusPoint');
+  }
+
+  void onMoveUpdate(MoveEvent event) {
+    print('onMoveUpdate - pos: ${event.localPos} delta: ${event.delta}');
+  }
+
+  void onMoveEnd(MoveEvent event) {
+    print('cua Draw Line');
+  }
+
+  void onMoveStart(MoveEvent event) {
+    print('cua Draw Line');
+  }
+
+  void onLongPress(TapEvent event) {
+    // listings.add(drawLine);
+
+    print('onLongPress - pos: ${event.localPos}');
+  }
+
+  void onDoubleTap(event) {
+    print('onDoubleTap - pos: ' + event.localPos.toString());
+  }
+
+  void onTap(event) {
+    print('onTap - pos: ' + event.localPos.toString());
   }
 }
