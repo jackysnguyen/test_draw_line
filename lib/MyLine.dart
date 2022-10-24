@@ -75,12 +75,26 @@ class MyCircle extends CustomPainter {
 class MyAngle extends CustomPainter {
   final Offset a;
   final Offset b;
-  final Offset c;
-  MyAngle({required this.a, required this.b, required this.c});
+
+  MyAngle({required this.a, required this.b});
 
   @override
   void paint(Canvas canvas, Size size) {
     var path = Path();
+
+    if (this.a.dx == 0 && this.b.dx == 0) {
+      return;
+    }
+
+    var dyC = 0.00;
+
+    if (this.a.dy > 200) {
+      dyC = this.a.dy - 100;
+    } else {
+      dyC = this.a.dy + 100.0;
+    }
+
+    Offset c = Offset(this.a.dx, dyC);
     path.moveTo(a.dx, a.dy);
 
     //Draw horizonal line from the center to the right, given user's length (a)
@@ -139,6 +153,9 @@ class MyAngle extends CustomPainter {
           radians(degreesStart) - radians(degreesEnd), true, anglePaint);
     } else {
       canvas.drawArc(rect, startAngle, endAngle - startAngle, true, anglePaint);
+
+      // canvas.drawArc(rect, radians(degreesStart),
+      //     radians(degreesEnd) - radians(degreesStart), true, anglePaint);
     }
 
     //var textPainter = TextPainter(

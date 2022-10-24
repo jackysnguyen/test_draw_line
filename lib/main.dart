@@ -20,7 +20,7 @@ class _XGestureExampleState extends State<XGestureExample> {
   Offset xPos = Offset(150, 250);
   Offset yPos = Offset(150, 350);
   Offset zPos = Offset(50, 400);
-  var listLine = [];
+
   // Widget drawLine = Draw_Line(Offset(0, 0), Offset(0, 100));
   // List<Widget> listings = [];
   @override
@@ -36,7 +36,7 @@ class _XGestureExampleState extends State<XGestureExample> {
       //     //         b: yPos,
       //     //         sideColor: Color(0xfff60404),
       //     //         sideWidth: 5)),
-      //     // ...listLine,
+      //     //     ...listLine,
       //   ],
       // ),
     );
@@ -85,7 +85,7 @@ class _XGestureExampleState extends State<XGestureExample> {
   void onMoveEnd(MoveEvent event) {
     setLastEventName('onMoveEnd');
 
-    listLine.add(DrawLine(a: xPos, b: yPos));
+    // listLine.add(DrawLine(a: xPos, b: yPos));
     print('onMoveEnd - pos: $yPos');
   }
 
@@ -137,34 +137,46 @@ class DrawLine extends StatefulWidget {
 }
 
 class _DrawLineState extends State<DrawLine> {
-  Offset b = Offset(0, 0);
+  Offset startLine = Offset(0, 0);
+  Offset endLine = Offset(0, 0);
+  var listLine = [];
   @override
   Widget build(BuildContext context) {
     return XGestureDetector(
       child: Material(
           child: Stack(
-              //Rotate triangle
-              children: [
-            CustomPaint(
-                // painter: MyLine(
-                //     a: widget.a,
-                //     b: widget.b,
-                //     sideColor: Color(0xfff60404),
-                //     sideWidth: 5)),
-                painter: MyAngle(a: widget.a, b: widget.b, c: widget.c)),
-            // CustomPaint(
-            //     painter: MyCircle(
-            //   center: widget.a,
-            // )),
-            // CustomPaint(
-            //     painter: MyCircle(
-            //   center: widget.b,
-            // )),
-            // CustomPaint(
-            //     painter: MyCircle(
-            //   center: widget.c,
-            // ))
-          ])),
+        children: [
+          CustomPaint(
+            painter: MyAngle(a: startLine, b: endLine),
+          ),
+          ...listLine
+        ],
+      )
+          // child: Stack(
+          //     //Rotate triangle
+          //     children: [
+          //   CustomPaint(
+          //       // painter: MyLine(
+          //       //     a: widget.a,
+          //       //     b: widget.b,
+          //       //     sideColor: Color(0xfff60404),
+          //       //     sideWidth: 5)),
+          //       // painter: MyAngle(a: widget.a, b: widget.b, c: widget.c)
+          //       ),
+          //   // CustomPaint(
+          //   //     painter: MyCircle(
+          //   //   center: widget.a,
+          //   // )),
+          //   // CustomPaint(
+          //   //     painter: MyCircle(
+          //   //   center: widget.b,
+          //   // )),
+          //   // CustomPaint(
+          //   //     painter: MyCircle(
+          //   //   center: widget.c,
+          //   // ))
+          // ])
+          ),
       doubleTapTimeConsider: 300,
       longPressTimeConsider: 350,
       onTap: onTap,
@@ -210,15 +222,25 @@ class _DrawLineState extends State<DrawLine> {
   }
 
   void onMoveUpdate(MoveEvent event) {
+    setState(() {
+      endLine = event.localPos;
+      //listLine.isNotEmpty(index, element)
+    });
     print('onMoveUpdate - pos: ${event.localPos} delta: ${event.delta}');
   }
 
   void onMoveEnd(MoveEvent event) {
-    print('cua Draw Line');
+    // listLine.add(DrawLine(a: startLine, b: endLine));
+    listLine.add(CustomPaint(
+      painter: MyAngle(a: startLine, b: endLine),
+    ));
+    // print(listLine);
+    // print('cua Draw Line');
   }
 
   void onMoveStart(MoveEvent event) {
-    print('cua Draw Line');
+    startLine = event.localPos;
+    // print('cua Draw Line');
   }
 
   void onLongPress(TapEvent event) {
