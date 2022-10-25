@@ -152,7 +152,9 @@ class MyAngle extends CustomPainter {
       canvas.drawArc(rect, radians(degreesEnd),
           radians(degreesStart) - radians(degreesEnd), true, anglePaint);
     } else {
-      canvas.drawArc(rect, startAngle, endAngle - startAngle, true, anglePaint);
+      print(
+          'start Angle: ${startAngle} and end Angle: ${endAngle - startAngle}');
+      canvas.drawArc(rect, startAngle, endAngle, true, anglePaint);
 
       // canvas.drawArc(rect, radians(degreesStart),
       //     radians(degreesEnd) - radians(degreesStart), true, anglePaint);
