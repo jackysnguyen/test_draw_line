@@ -99,9 +99,9 @@ class MyAngle extends CustomPainter {
 
     //Draw horizonal line from the center to the right, given user's length (a)
     path.lineTo(b.dx, b.dy);
-    path.lineTo(c.dx, c.dy);
 
     Paint innerTriangle = Paint()..style = PaintingStyle.stroke;
+    innerTriangle.color = Colors.red;
 
     canvas.drawPath(path, innerTriangle);
 
@@ -109,13 +109,19 @@ class MyAngle extends CustomPainter {
     Paint outerTriangle = Paint()..style = PaintingStyle.stroke;
 
     canvas.drawPath(path, outerTriangle);
+
+    var path2 = Path();
+    path2.moveTo(b.dx, b.dy);
+    path2.lineTo(c.dx, c.dy);
+    canvas.drawPath(path2, innerTriangle);
+
     drawAngleSymbol(a, b, c, canvas);
   }
 
   void drawAngleSymbol(Offset pt1, Offset pt2, Offset pt3, Canvas canvas) {
-    print(pt3);
-    print(pt2);
-    print(pt1);
+    print('a (pt1): ${pt1}');
+    print('b (pt2): ${pt2}');
+    print('c (pt3): ${pt3}');
     var dx1 = pt1.dx - pt2.dx;
     var dy1 = pt1.dy - pt2.dy;
     var dx2 = pt3.dx - pt2.dx;
@@ -127,37 +133,63 @@ class MyAngle extends CustomPainter {
     print('dy2: ${dy2}');
     print('dx2: ${dx2}');
     var a = ((endAngle - startAngle) * 180 / pi + 360) % 360;
+
+    // if (a >= 180) {
+    //   a = 360 - a;
+    // }
+
     Paint anglePaint = Paint()
       ..color = Colors.red
       ..style = PaintingStyle.fill;
     // draw angleSymbol
     var rect = Rect.fromCircle(center: pt2, radius: 30);
-    print('startAngle: ${startAngle}, degrees: ${degrees(startAngle)}');
-    print('endAngle: ${endAngle}, degrees: ${degrees(endAngle)}');
-    print('Góc : ${a}');
+    print('startAngle radians: ${startAngle}, degrees: ${degrees(startAngle)}');
+    print('endAngle radians: ${endAngle}, degrees: ${degrees(endAngle)}');
+    print('Góc : ${a} (Bao gồm góc tù + góc nhọn)');
 
     var degreesStart = degrees(startAngle);
     var degreesEnd = degrees(endAngle);
 
-    if (degreesEnd < 0) {
-      degreesEnd = 360 + degreesEnd;
-    }
+    // if (degreesEnd < 0) {
+    //   degreesEnd = 360 + degreesEnd;
+    // }
 
-    if (degreesStart < 0) {
-      degreesStart = 360 + degreesStart;
-    }
-    print('startDegreesAft degrees: ${degreesStart}');
-    print('endDegreesAft degrees: ${degreesEnd}');
+    // if (degreesStart < 0) {
+    //   degreesStart = 360 + degreesStart;
+    // }
+    print(
+        'startDegreesAft radians: ${radians(degreesStart)}, degrees: ${degreesStart}');
+    print(
+        'endDegreesAft radians: ${radians(degreesEnd)}, degrees: ${degreesEnd}');
+    //Test Draw ARC
+    var rectTest = Rect.fromCircle(center: Offset(100, 100), radius: 30);
+    var rectTest2 = Rect.fromCircle(center: Offset(200, 100), radius: 30);
+
+    // canvas.drawArc(
+    //     rectTest,
+    //     0, //radians
+    //     -1.5 * pi, //radians
+    //     true,
+    //     anglePaint);
+
+    // canvas.drawArc(
+    //     rectTest2,
+    //     0, //radians
+    //     1.5 * pi, //radians
+    //     true,
+    //     anglePaint);
     if (a > 180) {
+      print('Real angle: ${360 - a}');
+      // canvas.drawArc(rect, startAngle, endAngle, true, anglePaint);
       canvas.drawArc(rect, radians(degreesEnd),
           radians(degreesStart) - radians(degreesEnd), true, anglePaint);
     } else {
       print(
-          'start Angle: ${startAngle} and end Angle: ${endAngle - startAngle}');
-      canvas.drawArc(rect, startAngle, endAngle, true, anglePaint);
+          'start Angle: ${startAngle} and end Angle - start Angle: ${endAngle - startAngle}');
+      // canvas.drawArc(rect, startAngle, endAngle, true, anglePaint);
 
-      // canvas.drawArc(rect, radians(degreesStart),
-      //     radians(degreesEnd) - radians(degreesStart), true, anglePaint);
+      canvas.drawArc(rect, radians(degreesStart),
+          radians(degreesEnd) - radians(degreesStart), true, anglePaint);
     }
 
     //var textPainter = TextPainter(
